@@ -1,40 +1,65 @@
-// package de chiffrement
+// Importation du paquet de chiffrement
 const bcrypt = require('bcrypt');
-// créer et vérifier les tokens d'authentification
+
+// Importation du paquet pour créer et vérifier les tokens d'authentification
 const jwt = require('jsonwebtoken');
 
+// Charger le module dotenv
+require('dotenv').config();
+
+// Importation du modèle "User"
 const User = require('../models/User');
 
+// Exportation de la fonction "signup" - Création compte utilisateur
 exports.signup = (req, res, next) => {
-    bcrypt.hash(req.body.password, 10)
-    .then(hash => {
-        const user = new User({
-            email: req.body.email,
-            password: hash
-        });
-        user.save()
-        .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
-        .catch(error => res.status(400).json({ error }));
-    })
-    .catch(error => res.status(500).json({ error }));
+    // Hachage du mot de passe et salage 10 fois
+    bcrypt
+        .hash(req.body.password, 10)
+        // Réception du hash généré
+        .then(hash => {
+            // Création de l'utilisateur
+            const user = new User({
+                email: req.body.email,
+                password: hash
+            });
+            // Enregistrement de l'utilisateur dans la base
+            user
+                .save()
+                .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
+                .catch(() => res.status(400).json({ message: 'Email déjà utilisé' }));
+        })
+        .catch(error => res.status(500).json({ error }));
 };
 
+// Exportation de la fonction "login" - Connexion
 exports.login = (req, res, next) => {
+    // Vérification de l'existence de l'utilisateur dans la base
     User.findOne({ email: req.body.email })
-    .then(user => {
-        if (!user) {
-            return res.status(401).json({ error: 'Utilisateur non trouvé !' });
+    .then(userFind => {
+        // Envoi d'une erreur si non présent
+        if (!userFind) {
+            res.statusCode = 401;
+            res.statusMessage = 'Cet utilisateur n\'existe pas !';
+            res.end();
+            return;
         }
-        bcrypt.compare(req.body.password, user.password)
-        .then(valid => {
-            if (!valid) {
-                return res.status(401).json({ error: 'Mot de passe incorrect !' });
+        // Comparaison du mot de passe
+        bcrypt
+        .compare(req.body.password, userFind.password)
+        .then(pwValid => {
+            // Envoi d'une erreur si différent
+            if (!pwValid) {
+                res.statusCode = 401;
+                res.statusMessage = 'Mot de passe incorrect !';
+                res.end();
+                return;
             }
+            // Envoi d'une réponse avec l'ID et le token
             res.status(200).json({
-                userId: user._id,
+                userId: userFind._id,
                 token: jwt.sign(
-                    { userId: user._id },
-                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+                    { userId: userFind._id },
+                    process.env.TOKEN,
                     { expiresIn: '24h' }
                 )
             });

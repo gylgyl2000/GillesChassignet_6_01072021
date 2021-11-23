@@ -1,4 +1,4 @@
-// Importation de mongoose
+// Importation du paquet mongoose pour modéliser les objets MongoDB
 const mongoose = require('mongoose');
 
 // Création d'un schéma de données avec les champs pour chaque sauce
@@ -16,5 +16,5 @@ const sauceSchema = mongoose.Schema({
     usersDisliked: {type: [String] },
 });
 
-// Exportation du schéma en tant que modèle Mongoose appelé "Sauce"
+// Exportation du modèle "Sauce" vers le contrôleur "sauces.js"
 module.exports = mongoose.model('Sauce', sauceSchema);

@@ -1,6 +1,6 @@
 [
     {        
-        _id:"eizomfhazo",
+        _id:"eizomfhazo",        
         name:"The Last Dab",
         manufacturer:"Heatonist",
         description:'CAUTION! The Last Dab—the hottest sauce on Hot Ones, known for turning guests and fans alike into stuttering, fire-breathing lunatics—just got even crazier. The Last Dab first took the world by storm as the only sauce made with Smokin\' Ed Currie\'s infamous "Pepper X." This XX-rated edition gets its one-two punch of heat from addition of the equally lethal "Chocolate Pepper X." All you need is a dab to light the inferno and experience the Hot Ones tradition.',
