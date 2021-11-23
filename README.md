@@ -1,4 +1,4 @@
-[](PiiquanteLogo.png)
+<img src="PiiquanteLogo.png" />
 
 **Dépendances à installer :**
 - NodeJS 12.14 or 14.0.
